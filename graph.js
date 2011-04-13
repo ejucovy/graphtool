@@ -348,16 +348,17 @@ function drawPrimaryGraph(drawAll, toHighlight) {
 		    + "for a more detailed tutorial of"
 		    + " how to use this tool."
 		    +"</p></center><ul>"
-		    + "<li>You can save a link to your graph by"
-		    + " clicking the \"Link\" button above and"
-		    + " copying the hyperlink in the dropdown.</li>"
-		    + "<li>You can save an image of your graph"
-		    + " by clicking on the save button above. "
-		    + "It will let you download the graph image"
-		    + " as a jpg file, or open the graph as an"
-		    + " image in another tab or window, where "
-		    + "you can view it, or right-click on the image"
-		    + " to copy to your clipboard or download.</li></ul>"
+//		    + "<li>You can save a link to your graph by"
+//		    + " clicking the \"Link\" button above and"
+//		    + " copying the hyperlink in the dropdown.</li>"
+//		    + "<li>You can save an image of your graph"
+//		    + " by clicking on the save button above. "
+//		    + "It will let you download the graph image"
+//		    + " as a jpg file, or open the graph as an"
+//		    + " image in another tab or window, where "
+//		    + "you can view it, or right-click on the image"
+//		    + " to copy to your clipboard or download.</li>
+		    + "</ul>"
 		    +"</small>");
     jQuery("#primary_graph").children().first().replaceWith(blankslate);
   }

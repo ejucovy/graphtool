@@ -94,6 +94,7 @@ div.bluff-tooltip {
   <div class="plotbox">
     <!-- Bookmarking button -->
     <div class="getlink">
+      <!--
       <a class="permalink" 
 	 onclick="set_bookmark();toggleSlide('permalinkdiv');jQuery('#getlink_url').select();return false;" 
 	 id="panzoom1_permalink">Link</a> 
@@ -101,7 +102,8 @@ div.bluff-tooltip {
 	 onclick="exportGraph('primary', '/games/{{game.id}}/', this); return false;">
 	Save
       </a>
-    </div><!-- class="getlink" -->
+      -->
+    </div>
     <div class="bubblebox"> 
       <div style="display:none; height: 60px; width: 360px;" id="permalinkdiv" class="bubble"> 
 	<a href="javascript://;" class="closebutton" onmousedown="slideup('permalinkdiv');">Close</a> 
@@ -109,9 +111,9 @@ div.bluff-tooltip {
 	  Copy and paste this link for this graph:<br /> 
 	  <input style="width: 320px;" type="text" id="getlink_url" /> 
 	</form> 
-      </div><!-- class="bubble" -->
-    </div><!-- class="bubblebox" -->
-    
+      </div>
+    </div>
+
     <div class="plot">
       <div id="primary_graph"
 	   width="600" height="300" border="0">
