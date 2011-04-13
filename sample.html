@@ -1,15 +1,13 @@
-{% extends "game/main_template.html" %}
-{% load mvsim_tags %}
-{% block title %}Millennium Village{% endblock %}
+<html>
+<head>
 
-{% block scripts %}
 <script type="text/javascript" src="/static/javascript/MochiKit/MochiKit.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 <script type="text/javascript">
 jQuery.noConflict();
 </script>
-<script type="text/javascript" src="/static/javascript/tabber.js"></script>
-<script type="text/javascript" src="/static/javascript/getlink.js"></script>
+<script type="text/javascript" src="tabber.js"></script>
+<script type="text/javascript" src="getlink.js"></script>
 <!--
 <script type="text/javascript" src="http://bluff.jcoglan.com/javascripts/bluff.js"></script>
 -->
@@ -33,6 +31,7 @@ jQuery.noConflict();
 -->
 <script src="http://github.com/tschaub/jugl/raw/master/build/jugl.js" type="text/javascript"></script>
 
+<link href="style.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 div.bluff-tooltip {
   background-color: white;
@@ -43,392 +42,18 @@ div.bluff-tooltip {
 }
 </style>
 <style type="text/css">
-  @import "/static/css/graphingtool.css";
+  @import "graphingtool.css";
 </style>
 
-<script type="text/javascript" src="/static/javascript/graph.js"></script>
-<script type="text/javascript" src="/static/javascript/graph_model.js"></script>
+<script type="text/javascript" src="graph.js"></script>
+<script type="text/javascript" src="graph_model.js"></script>
 
-<script type="text/javascript">
-String.prototype.capitalize = function(){
-   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
-};
+<script type="text/javascript" src="graph_application.js"></script>
+</head>
 
-function render_template(name, context, parent, _callback) {
-  alert("foo!");
-  alert(name);
-  var template = new jugl.Template({
-    url: "/static/templates/" + name,
-    callback: function(template) {
-      var el = template.process({context: context});
-      jQuery(parent).empty();
-      jQuery(el).appendTo(parent);
-      if( _callback ) _callback();
-    }});
-};
+<body class="graphingtool">
 
-function Variable(id) {
-  this.name = id;
-  var text = jQuery("#data #"+id).attr("class");
-  this.text = text || id.replace(/_/g, " ").capitalize();
-  this.color = getColor(id);
-};
-
-function getLayers() {
-  return Layer.getAll().filter(function() { 
-    if( this.id == "primary" ) return false;
-    if( this.id.substr(0, 7) == "shadow_" ) return false;
-    return true;
-  });
-};
-
-function drawLayersOnPrimaryGraph() {
-  var layers = Visual.layers("primary");
-  var ul = jQuery("div#layers_in_graph form#mg_layers ul.layerstab");
-  ul.empty();
-  layers.each(function() {
-    var layer = this;
-    var li = jQuery("<li />");
-    var input = jQuery("<input />").attr("type", "checkbox")
-                                   .attr("name", layer.id)
-                                   .attr("checked", "checked");
-    var a = jQuery("<a />").attr("href", "#"+layer.id)
-                           .text(layer.text());
-    input.appendTo(li);
-    a.appendTo(li);
-    li.appendTo(ul);
-  });
-
-  jQuery("#mg_varlegend ul#legend li a")
-    .parent("li").removeClass("highlight");
-  jQuery("#mg_layers .layerstab li a")
-    .parent("li").removeClass("highlight");
-
-  var last_layer = layers[layers.length-1];
-  if( last_layer ) {
-      jQuery("#mg_layers .layerstab li a[href=#"+last_layer.id+"]")
-	.parent("li").addClass("highlight");
-
-    last_layer.datasets().each(function() {
-      jQuery("#mg_varlegend ul#legend li a[href='#"+this.id+"']")
-        .parent("li").addClass("highlight");
-    });
-    
-  }
-};
-
-function drawVariablesOnPrimaryGraph() {
-  var variables = Visual.layer_variables("primary");
-
-  var ul = jQuery("#mg_varlegend ul#legend");
-  ul.empty();
-  
-  variables.each(function() {
-    var variable = this;
-    var li = jQuery("<li />").css("color", variable.color());
-    var a = jQuery("<a />").attr("href", "#"+variable.id)
-                           .text(variable.text());
-    a.appendTo(li);
-    li.appendTo(ul);
-  });
-
-  jQuery("#mg_varlegend ul#legend li a")
-    .parent("li").removeClass("highlight");
-  var last_layer = Visual.layers("primary").last()[0];
-  if( last_layer ) {
-    last_layer.datasets().each(function() {
-      jQuery("#mg_varlegend ul#legend li a[href='#"+this.id+"']")
-        .parent("li").addClass("highlight");
-    });
-  }
-};
-
-function drawLayersTab(highlight) {
-  var layers = getLayers();
-  
-  var ul = jQuery("div#gl_tabber_layers form ul.layerstab");
-  ul.empty();
-  layers.each(function() {
-    var layer = this;
-    var li = jQuery("<li />");
-    var a = jQuery("<a />").attr("href", "#"+layer.id)
-                           .text(layer.text());
-    if( layer.id == highlight ) {
-      a.attr("class", "active");
-    }
-    a.appendTo(li);
-    li.appendTo(ul);
-  });
-
-  // if length greater than one
-  if( Math.max(0, layers.length-1) ) {
-    jQuery("div.layer_actions input[value='Delete']").removeAttr("disabled");
-  };
-};
-
-function markVariablesInUse() {
-  getLayers().each(function() {
-    this.datasets().each(function() {
-      // make sure it is highlighted/disabled in the variable bin
-      // happily, jquery won't duplicate a class that's already present
-      // so we can just be dumb about this
-      jQuery("#gl_tabber_variables ul.variablestab li a[href='#"+this.id+"']")
-        .addClass("inUse");
-    });
-  });
-};
-
-function highlightLayerInTab(layer_id) {
-  jQuery("#gl_tabber_layers .layerstab a").removeClass("active");
-  jQuery("#gl_tabber_layers .layerstab a[href='#"+layer_id+"']").addClass("active");
-};
-
-  jQuery(window).load(function() {
-
-    drawLayersTab("{{layers.keys.0}}");
-    drawLayer("{{layers.keys.0}}");
-    drawLayersOnPrimaryGraph();
-    markVariablesInUse();
-
-    // lame way of making sure the primary graph can be drawn
-    var loader = new DrawWhenReady(0, function() { }, function() { 
-      Layer.get("primary").add_dataset("morx");
-      shadow();
-      drawPrimaryGraph();
-      drawVariablesOnPrimaryGraph();
-    });
-    var url = "/games/{{game.id}}/variable_history_raw?variable=morx";
-    loader.load("morx", url);
-
-    jQuery(".mg .x_axis select").live("change", function() {
-      var var_id = jQuery(this).val();
-      var layer_id = jQuery("h3.layertitle").attr("name");
-      var switchXAxis = function() {
-        drawPrimaryGraph();
-      };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis);
-      var url = "/games/{{game.id}}/variable_history_raw?variable="+var_id;
-      loader.load(var_id, url);
-    });
-
-    jQuery("#layer_graph_container .x_axis select").live("change", function() {
-      var var_id = jQuery(this).val();
-      var layer_id = jQuery("h3.layertitle").attr("name");
-      var switchXAxis = function() {
-        drawLayer(layer_id);
-      };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis);
-      var url = "/games/{{game.id}}/variable_history_raw?variable="+var_id;
-      loader.load(var_id, url);
-    });
-
-    jQuery("div.layer_actions input[value='Push']").click(function() {
-      var layer_id = jQuery("h3.layertitle").attr("name");
-
-      // since the buffer is what will be pushed to the primary graph,
-      // we want to use the primary graph's x-axis state
-      var x_axis = jQuery(".mg .x_axis select").val();
-      var loader = new DrawWhenReady(0, function() { },
-        function() {
-          Visual.superimpose(layer_id, "primary");
-          shadow_one(Layer.get(layer_id));
-          drawPrimaryGraph(true);
-          drawVariablesOnPrimaryGraph();
-          set_bookmark();
-      });
-      var url = "/games/{{game.id}}/variable_history_raw?variable="+x_axis;
-      loader.load(x_axis, url);
-
-      drawLayersOnPrimaryGraph();
-    });
-
-    jQuery("div.layer_actions input[value='Delete']").click(function() {
-      var layer_id = jQuery("h3.layertitle").attr("name");
-
-      if( Visual.has_layer("primary", layer_id) ) {
-        Visual.superdepose(layer_id, "primary");
-        shadow_one(Layer.get(layer_id));
-        drawPrimaryGraph();
-        drawLayersOnPrimaryGraph();
-        drawVariablesOnPrimaryGraph();
-      }
-
-      // return this layer's variables to the bin
-      Layer.get(layer_id).datasets().each(function() {
-        jQuery("#gl_tabber_variables ul.variablestab li a[href='#"+this.id+"']")
-          .removeClass("inUse");
-      });
-
-      jQuery("#layer_set .graph#"+layer_id).remove();
-
-      // pick a layer to highlight instead
-      layer_id = getLayers().last()[0].id
-
-      drawLayersTab(layer_id);
-      drawLayer(layer_id);
-      jQuery("div#gl_tabber a#Layers").click();
-
-      if( getLayers().length == 1 )
-        jQuery("div.layer_actions input[value='Delete']")
-            .attr("disabled", "disabled");
-      set_bookmark();
-    });
-
-    /* clicking the layer name will rename it */
-    jQuery("h3.layertitle").click(function() {
-      var layer_id = jQuery(this).attr("name");
-      var recursive_validation_loop = function() {
-        var layer_name = prompt("You can rename your layer. What'll it be?");
-        if( !layer_name || !layer_name.trim() ) {
-          return Layer.get(layer_id).text();
-        }
-        if( Layer.existsWithName(layer_name) ) {
-          alert("A layer by that name already exists. Please try again.");
-          return recursive_validation_loop();
-        } 
-        return layer_name;
-      };
-
-      var layer_name = recursive_validation_loop();
-      Layer.get(layer_id).setName(layer_name);
-      drawLayersTab(layer_id);
-      jQuery(this).text(layer_name);
-      if( jQuery("#main_graph_title").attr("class") == layer_id ) {
-        jQuery("#main_graph_title").text(layer_name);
-      }
-      drawLayersOnPrimaryGraph();
-    });
-
-    jQuery("div.createbox a").click(function() {
-      var recursive_validation_loop = function() {
-        var layer_id = "layer_" + Math.floor(Math.random(100)*100);
-        if( Layer.exists(layer_id) ) {
-          return recursive_validation_loop();
-        } 
-        return layer_id;
-      };
-
-      var layer_id = recursive_validation_loop();
-      new_layer(layer_id);
-      drawLayersTab(layer_id);
-      drawLayer(layer_id);
-      jQuery("div#gl_tabber a#Variables").click();
-
-      jQuery("div.layer_actions input[value='Delete']").removeAttr("disabled");
-    });
-
-    /* clicking a layer in the list of layers on the graph will highlight that layer */
-    jQuery("#mg_layers ul.layerstab li a").live("click", function() {
-      var layer_id = jQuery(this).attr("href").substr(1);
-      toggleSupHighlight("primary", layer_id);
-
-      jQuery("#mg_varlegend ul#legend li a")
-          .parent("li").removeClass("highlight");
-      Layer.get(layer_id).datasets().each(function() {
-        jQuery("#mg_varlegend ul#legend li a[href='#"+this.id+"']")
-          .parent("li").addClass("highlight");
-      });
-
-      jQuery("#mg_layers .layerstab li")
-          .removeClass("highlight");
-      jQuery("#mg_layers .layerstab li a[href='#"+layer_id+"']")
-          .parent("li").addClass("highlight");
-    });
-
-    /* clicking a checkbox in the list of layers on the primary graph will toggle that layer's visibility */
-    jQuery("#layers_in_graph form#mg_layers ul.layerstab input[type=checkbox]").live("change", function() {
-      var layer_id = jQuery("#mg_layers .layerstab li.highlight input").attr("name");
-      drawPrimaryGraph(false, layer_id);
-    });
-
-    /* clicking a variable in the list of variables on the graph will highlight that variable's layer */
-    jQuery("#mg_varlegend ul#legend li a").live("click", function() {
-      var var_id = jQuery(this).attr("href").substr(1);
-      var layer_id = Dataset.get(var_id).layer().id;
-      toggleSupHighlight("primary", layer_id);
-
-      jQuery("#mg_layers .layerstab li")
-          .removeClass("highlight");
-
-      jQuery("#mg_layers .layerstab li a[href='#"+layer_id+"']")
-          .parent("li").addClass("highlight");
-
-      jQuery("#mg_varlegend ul#legend li a")
-          .parent("li").removeClass("highlight");
-      Layer.get(layer_id).datasets().each(function() {
-        jQuery("#mg_varlegend ul#legend li a[href='#"+this.id+"']")
-          .parent("li").addClass("highlight");
-      });
-    });
-
-    /* clicking a layer in the layer-bin will activate that layer in the workspace */
-    jQuery("#gl_tabber_layers ul.layerstab li a").live("click", function() {
-      var layer_id = jQuery(this).attr("href").substr(1);
-      drawLayer(layer_id);
-      highlightLayerInTab(layer_id);
-      jQuery("div#gl_tabber a#Variables").click();
-    });
-
-    /* clicking a variable that's in use will activate its layer in the workspace */
-    jQuery("#gl_tabber_variables ul.variablestab li a.inUse").live("click", function() {
-      var var_id = jQuery(this).attr("href").substr(1);
-      var layer_id = Dataset.get(var_id).layer().id
-      drawLayer(layer_id);
-      highlightLayerInTab(layer_id);
-      jQuery("div#gl_tabber a#Layers").click();
-    });
-
-    /* double-clicking an unused variable in the bin will add that variable to the layer */
-    jQuery("#gl_tabber_variables ul.variablestab li a").dblclick(function() { if( !jQuery(this).hasClass("inUse") ) { add_this_variable.call(this); } });
-    add_this_variable = function() {
-      var self = this;
-      var var_id = jQuery(self).attr("href").substr(1);
-      var layer_id = jQuery("h3.layertitle").attr("name");
-
-      var addToLayer = function() {
-        Layer.get(layer_id).add_dataset(var_id);
-        drawLayer(layer_id);
-        highlightLayerInTab(layer_id);
-
-        jQuery(self).addClass("inUse");
-
-        set_bookmark();
-      }
-
-      var loader = new DrawWhenReady(0, function() { }, addToLayer);
-      var url = "/games/{{game.id}}/variable_history_raw?variable="+var_id;
-      loader.load(var_id, url);
-    };
-
-    /* double-clicking a variable in the layer_variables legend will remove it */
-    jQuery("div#legendbox ul#legend li a").live("dblclick", function() {
-      var var_id = jQuery(this).attr("href").substr(1);
-      var layer_id = jQuery("h3.layertitle").attr("name");
-      Layer.get(layer_id).remove_dataset(var_id);
-      drawLayer(layer_id);
-
-      jQuery("#gl_tabber_variables ul.variablestab li a[href='#"+var_id+"']")
-          .removeClass("inUse");
-
-      set_bookmark();
-    });
-
-  set_bookmark();
-});
-
-var set_bookmark = function() { 
-  var bookmark = make_bookmark();
-  bookmark = window.location.protocol+"//"+window.location.host + "/games/{{game.id}}/graph/?" + bookmark;
-  jQuery("#getlink_url").val(bookmark);
-};
-
-</script>
-
-{% endblock %}
-
-{% block body_attributes %} class="graphingtool"{% endblock %}
-{% block content %}
-
+<div id="main_content">
 <!-- Begin MAIN GRAPH -->
 <div class="mg">
 
@@ -499,13 +124,12 @@ var set_bookmark = function() {
 	  X-axis:
 	  <select>
 	    <option value=""># Turn</option>
-	    {% for variable in variables %}
-	    <option 
-	       value="{{variable.name}}"
-	       {% ifequal variable.name primary_xaxis %}{% if variable.name|neq:"morx" %}selected="selected"{% endif %}{% endifequal %}>
-	      {{variable.descriptive_name}}
+	    <option value="water">
+	      Water Collected
 	    </option>
-	    {% endfor %}
+	    <option value="coal">
+	      Coal Collected
+	    </option>
 	  </select>
 	</form>
       </div><!-- class="x_axis" -->
@@ -533,16 +157,16 @@ var set_bookmark = function() {
 	<div class="varbin">
 	  <form>
 	    <ul class="variablestab">
-	      {% for variable in variables %}
-	      {% if variable.name|neq:"morx" %}
 	      <li>
-		<a href="#{{variable.name}}">
-		  {{variable.descriptive_name}}
+		<a href="#water">
+		  Water Collected
 		</a>
 	      </li>
-	      {% endif %}
-
-	      {% endfor %}
+	      <li>
+		<a href="#coal">
+		  Coal Collected
+		</a>
+	      </li>
 	    </ul><!-- eventstab -->
 	  </form>
 	</div><!-- class="varbin" -->
@@ -596,13 +220,12 @@ var set_bookmark = function() {
 	    X-axis:
 	    <select>
 	      <option value=""># Turn</option>
-	      {% for variable in variables %}
-	      <option 
-		 value="{{variable.name}}"
-		 {% ifequal variable.name secondary_xaxis %}{% if variable.name|neq:"morx" %}selected="selected"{% endif %}{% endifequal %}>
-		{{variable.descriptive_name}}
+	      <option value="water">
+		Water Collected
 	      </option>
-	      {% endfor %}
+	      <option value="coal">
+		Coal Collected
+	      </option>
 	    </select>
 	  </form>
 	</div><!-- class="x_axis" -->
@@ -627,49 +250,19 @@ var set_bookmark = function() {
     <div id="primary" class="graph">
       <div class="variables" />
       <div class="layers">
-	{% for layer in primary_layers %}
-	<a href="#{{layer}}"></a>
-	{% endfor %}
       </div>
     </div>
     
-    {% for item in layers.items %}
-    {% with item.0 as layer %}{% with item.1 as vars %}
-    <div id="{{layer}}" class="graph"
-	 name="{{layer_names|get_item:layer}}">
+    <div id="layer_1" class="graph" name="Layer 1">
       <div class="variables">
-	{% for variable in vars %}
-	<a href="#{{variable}}"></a>
-	{% endfor %}
       </div>
     </div>
-    {% endwith %}{% endwith %}
-    {% endfor %}
   </div>
   
   <div id="shadow_layers">
   </div>
 
   <div id="data">
-    {% for variable in variables %}
-    <table id="{{variable.name}}"
-	   class="{{variable.descriptive_name}}">
-      <tr>
-	<th scope="col">turn #</th>
-	<th scope="col">{{variable.name}}</th>
-      </tr>
-      
-      {% for turn in game.turns %}
-      {% with forloop.counter as i %}
-      <tr class="{% cycle 'odd' 'even' %}">
-	<th scope="row">{{turn.number}}</th>
-	
-	<td>{{variable.values|get_item:i}}</td>
-      </tr>
-      {% endwith %}
-      {% endfor %}
-    </table>
-    {% endfor %}
     
   </div>
 </div>
@@ -677,5 +270,6 @@ var set_bookmark = function() {
 <div id="invisible_container" style="display:none;">
 
 </div>
-
-{% endblock %}
+</div>
+</body>
+</html>
