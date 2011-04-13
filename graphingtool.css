@@ -1,0 +1,527 @@
+/* Graph Tool universal -------------------------- */
+
+.graphingtool .shim
+{
+	height: 20px;
+	display: block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	clear: both;
+}
+
+
+/* Main Graph and Graphing Layer shared ---------- */
+
+.panel
+{
+	width: 200px;
+	display: block;
+	float: left;
+	margin: 0 5px 0 0;
+	padding: 0;
+	border: 0;
+}
+
+.panel li.highlight
+{
+	background-color: #e1eaf3 !important;
+}
+
+.varlegend
+{
+	width: 150px;
+	height: 335px;
+	display: block;
+	float: left;
+	margin: 22px 5px 0 0;
+	padding: 0;
+	border: 1px solid #ccc;
+}
+
+.varlegend h3
+{
+	margin: 0 !important;
+	padding: 5px 0 5px 5px !important;
+	border: 0 !important;
+	font-size: 12px !important;
+	line-height: 12px !important;
+	color: #000  !important;
+}
+
+.varlegend .legendbox
+{
+	height: 305px;
+	overflow: auto;
+	margin: 5px 0 0 0;
+	padding: 0;
+	border: 0;
+}
+
+.varlegend #legend
+{
+	margin: 0 0 10px 20px;
+	padding: 0;
+	border: 0;
+	list-style-type: disc;
+	font-size: 12px;
+}
+
+.varlegend #legend li
+{
+	margin: 0;
+	padding: 0 0 5px 0;
+	border: 0;
+}
+
+.varlegend #legend li a
+{
+	color: inherit;
+	text-decoration: none;
+}
+
+.varlegend #legend li a:hover
+{
+	filter: alpha(opacity=80);
+	opacity: 0.8;
+}
+
+.varlegend li.highlight
+{
+	font-weight: bold;
+}
+
+.plotbox
+{
+	width: 600px;
+	height: 359px;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.plot
+{
+	width: 600px;
+	height: 335px;
+	display: block;
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #ccc;
+}
+
+.x_axis
+{
+	width: 600px;
+	height: 30px;
+	display: block;
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 30px;
+	text-align: center;
+}
+
+
+/* Tabbed panel (tabbers) ------------------------ */
+
+.panel ul.tabbernav
+{
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	font-family: inherit;
+}
+
+.panel ul.tabbernav li
+{
+	display: block;
+	float: left;
+	width: 90px;
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	list-style: none;
+	background: transparent url('/static/images/tab_inactive.png') top left no-repeat;
+}
+
+.panel ul.tabbernav li a
+{
+	display: block;
+	margin: 0 7px;
+	padding: 0 7px;
+	border: 0;
+	color: #999;
+	background-color: transparent !important;
+	font-size: 12px;
+	line-height: 22px;
+	text-decoration: none;
+}
+
+.panel ul.tabbernav li a:hover
+{
+	border: 0;
+	color: #ccc;
+	background-color: transparent !important;
+}
+
+.panel ul.tabbernav li.tabberactive a
+{
+	border: 0;
+	color: #000;
+	font-weight: bold;
+	background-color: transparent !important;
+}
+
+.panel ul.tabbernav li.tabberactive a:hover
+{
+	border: 0;
+	color: #000;
+	background-color: transparent !important;
+}
+
+.panel ul.tabbernav li.tabberactive
+{
+	background: transparent url('/static/images/tab_active.png') top left no-repeat;
+}
+
+.panel .tabbertab
+{
+	height: 335px;
+	overflow: auto;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #ccc;
+	border-top: 0;
+	background-color: #e0e0e0;
+}
+
+.panel .layerstab,
+.panel .eventstab,
+.panel .variablestab
+{
+	margin: 5px;
+	padding: 0;
+	border: 0;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	list-style: none;
+	font-size: 12px;
+}
+
+.panel .layerstab li,
+.panel .eventstab li,
+.panel .variablestab li
+{
+	margin:  0;
+	padding: 5px;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	background-color: #fff;
+	list-style: none;
+}
+
+.panel .layerstab li a,
+.panel .eventstab li a,
+.panel .variablestab li a
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: #369;
+	text-decoration: none;
+}
+
+.panel .layerstab li a:hover,
+.panel .eventstab li a:hover,
+.panel .variablestab li a:hover
+{
+	color: #999;
+	text-decoration: none;
+}
+
+.gl .panel .variablestab li a.inUse
+{
+        font-style: italic;
+	color: black;
+}
+
+#gl_tabber_layers .layerstab a.active {
+        font-weight: bold;
+}
+
+/* Main Graph (MG) section ----------------------- */
+
+.mg
+{
+	margin: 0 10px;
+	padding: 0;
+	border: 0;
+}
+
+.mg h2
+{
+	margin: 0;
+	padding: 0 0 5px 0;
+	border: 0;
+	font-size: 130%;
+}
+
+.mg .getlink
+{
+	width: 600px;
+	height: 22px;
+	display: block;
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.permalink.loading {
+     	background: url('/static/images/getlink_inactive_long.png') top left no-repeat;
+        width: 45px;
+}
+.permalink:hover.loading {
+     	background: url('/static/images/getlink_active_long.png') top left no-repeat;
+        width: 45px;
+}
+.permalink
+{
+        text-decoration: none !important;
+	display: block;
+	float: right;
+	width: 30px;
+	height: 19px;
+	margin: 0;
+	padding: 0 0 0 25px;
+	border: 0;
+	background: url('/static/images/getlink_inactive.png') top left no-repeat;
+	font-size: 11px;
+	font-weight: bold;
+	color: #000;
+	line-height: 19px;
+	cursor: pointer;
+}
+
+.permalink:hover
+{
+	background: url('/static/images/getlink_active.png') top left no-repeat;
+}
+
+.bubblebox
+{
+	position: absolute;
+	margin: 0 0 0 236px;
+	padding: 0;
+	border: 1px solid #ccc;
+	overflow: hidden;
+	z-index: 1000;
+	font-size: 12px;
+}
+
+.bubblebox .bubble
+{
+	display: none;
+	overflow: hidden !important;
+	margin: 0;
+	padding: 2px;
+	border: 0;
+	background-color: #efefef;
+}
+
+.bubblebox .closebutton
+{
+	display: block;
+	height: 20px;
+	line-height: 20px;
+	float: right;
+	margin: 0 0 5px 0;
+	padding: 0 5px 0 18px;
+	border: 0;
+	background: url('/static/images/getlink_close.gif') 2px left no-repeat;
+	font-size: 11px;
+	font-weight: bold;
+	color: #000;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.bubblebox .bubble form { margin: 1.5em 1em 1em 1em; }
+
+
+/* Graphing Layer (GL) section ------------------- */
+
+.gl
+{
+	margin: 0 10px;
+	padding: 0;
+	border: 0;
+}
+
+.gl h2
+{
+	margin: 0 0 5px 0;
+	padding: 0;
+	border: 0;
+	font-size: 110%;
+	color: #666;
+}
+
+.gl .panel .tabbertab
+{
+	height: 376px;
+}
+
+
+.gl h3.layertitle
+{
+	height: 30px;
+	display: block;
+	margin:  0;
+	padding: 0 0 0 10px;
+	border: 0;
+	font-size: 14px;
+	line-height: 30px;
+	color: #666;
+}
+
+.gl .createbox
+{
+	width: 600px;
+	height: 22px;
+	display: block;
+	float: none;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 22px;
+	clear: both;
+}
+
+.gl .plotbox
+{
+	width: 768px;
+	height: 400px;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.gl .plotbox_inner
+{
+	height: 376px;
+	border: 1px solid #ccc;
+}
+
+.gl .gl_varlegend
+{
+	width: 150px;
+	height: 335px;
+	display: block;
+	float: left;
+	margin: 0 5px;
+	padding: 0;
+	border: 0;
+}
+
+.gl .layer_actions
+{
+	width: 150px;
+	height: 50px;
+	margin: 10px 0 0 0;
+	padding: 0;
+	border: 0;
+	clear: both;
+	font-size: 11px;
+}
+
+.gl .varlegend
+{
+	width: 150px;
+	height: 275px;
+	margin: 0;
+	float: none;
+}
+
+.gl .varlegend .legendbox
+{
+	height: 245px;
+}
+
+.gl .plot
+{
+	float: left;
+}
+
+.gl .shim
+{
+	height: 1px;
+}
+
+.gl .panel .varbin
+{
+	margin: 5px;
+	padding: 0;
+	border: 0;
+	border: 1px solid #ccc;
+	background-color: #fff;
+}
+
+.gl .panel .variablestab
+{
+	margin: 0 0 0 20px;
+	padding: 0;
+	border: 0;
+	list-style-type: disc;
+	font-size: 12px;
+}
+
+.gl .panel .variablestab li
+{
+	margin:  0;
+	padding: 5px;
+	border: 0;
+	list-style: disc;
+}
+
+.gl .panel .variablestab li a
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: #369;
+	text-decoration: none;
+}
+
+.gl .panel .variablestab li a:hover
+{
+	color: #999;
+	text-decoration: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
