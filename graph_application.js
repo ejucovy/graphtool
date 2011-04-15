@@ -131,11 +131,17 @@ function highlightLayerInTab(layer_id) {
   jQuery("#gl_tabber_layers .layerstab a[href='#"+layer_id+"']").addClass("active");
 };
 
+var default_url_builder = function(variable) {
+  return "variables/" + variable + ".html";
+};
 
+function startApp(initial_layer, url_builder) {
+  initial_layer = initial_layer || "layer_1";
+  url_builder = url_builder || default_url_builder;
   jQuery(window).load(function() {
 
-    drawLayersTab("layer_1");
-    drawLayer("layer_1");
+    drawLayersTab(initial_layer);
+    drawLayer(initial_layer);
     drawLayersOnPrimaryGraph();
     markVariablesInUse();
 
@@ -146,7 +152,7 @@ function highlightLayerInTab(layer_id) {
       drawPrimaryGraph();
       drawVariablesOnPrimaryGraph();
     });
-    var url = "variables/morx.html";
+    var url = url_builder("morx");
     loader.load("morx", url);
 
     jQuery(".mg .x_axis select").live("change", function() {
@@ -156,7 +162,7 @@ function highlightLayerInTab(layer_id) {
         drawPrimaryGraph();
       };
       var loader = new DrawWhenReady(0, function() { }, switchXAxis);
-      var url = "variables/"+var_id+".html";
+      var url = url_builder(var_id);
       loader.load(var_id, url);
     });
 
@@ -167,7 +173,7 @@ function highlightLayerInTab(layer_id) {
         drawLayer(layer_id);
       };
       var loader = new DrawWhenReady(0, function() { }, switchXAxis);
-      var url = "variables/"+var_id+".html";
+      var url = url_builder(var_id);
       loader.load(var_id, url);
     });
 
@@ -185,7 +191,7 @@ function highlightLayerInTab(layer_id) {
           drawVariablesOnPrimaryGraph();
           set_bookmark();
       });
-      var url = "variables/"+x_axis+".html";
+      var url = url_builder(x_axis);
       loader.load(x_axis, url);
 
       drawLayersOnPrimaryGraph();
@@ -342,10 +348,10 @@ function highlightLayerInTab(layer_id) {
         jQuery(self).addClass("inUse");
 
         set_bookmark();
-      }
+      };
 
       var loader = new DrawWhenReady(0, function() { }, addToLayer);
-      var url = "variables/"+var_id+".html";
+      var url = url_builder(var_id);
       loader.load(var_id, url);
     };
 
@@ -364,6 +370,7 @@ function highlightLayerInTab(layer_id) {
 
   set_bookmark();
 });
+};
 
 var set_bookmark = function() {
   var bookmark = make_bookmark();
