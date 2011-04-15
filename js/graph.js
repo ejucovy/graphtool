@@ -273,12 +273,6 @@ function shadow() {
 };
 function drawPrimaryGraph(drawAll, toHighlight) {
   var layer_id = "primary";
-  var layerVariables = [];
-  var layer = Layer.get(layer_id);
-  layer.datasets().each(function() {
-    layerVariables.push(new Variable(this.id));
-  });
-  //render_template("legend.html", {variables: layerVariables}, "div#legendbox");
 
   if( Layer.get(layer_id).datasets().length || Visual.isComposite(layer_id) ) {
     // draw graph
@@ -367,10 +361,6 @@ function drawPrimaryGraph(drawAll, toHighlight) {
 function drawLayerBuffer(layer_id, x_axis) {
   var layerVariables = [];
   jQuery("#invisible_container").children().remove();
-  var layer = Layer.get("shadow_" + layer_id);
-  layer.datasets().each(function() {
-    layerVariables.push(new Variable(this.id));
-  });
 
   return drawGraph("shadow_" + layer_id,
 		   "invisible_container",
@@ -379,22 +369,17 @@ function drawLayerBuffer(layer_id, x_axis) {
 };
 
 function drawLayer(layer_id) {
-  var layerVariables = [];
-  var layer = Layer.get(layer_id);
-  layer.datasets().each(function() {
-    layerVariables.push(new Variable(this.id));
-  });
 
   var ul = jQuery("#legendbox ul#legend");
   ul.empty();
 
-  jQuery(layerVariables).each(
+  Layer.get(layer_id).datasets().each(
     function() {
       var variable = this;
       var li = jQuery("<li />");
       li.css("color", variable.color);
       var a = jQuery("<a />")
-	.attr("href", "#"+variable.name)
+	.attr("href", "#"+variable.id)
 	.text(variable.text);
       a.appendTo(li);
       li.appendTo(ul);

@@ -181,7 +181,7 @@ var Layer = function(sel) {
   };
   this.text = function() {
     return jQuery(this.sel).attr("name") ||
-      this.id.replace(/_/g, " ").capitalize();
+      this.id.replace(/_/g, " ").replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
   this._varsEl = function() {
     var vars_el = jQuery(this.sel).children("div.variables"); // @@html: LayerVariable
@@ -310,7 +310,7 @@ var Dataset = function(sel) {
   this.color = function() { return getColor(this.id); };
   this.text = function() {
     return jQuery("#data #"+this.id).attr("class") ||
-      this.id.replace(/_/g, " ").capitalize();
+      this.id.replace(/_/g, " ").replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
 
 };

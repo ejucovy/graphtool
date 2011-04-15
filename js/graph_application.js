@@ -1,27 +1,3 @@
-String.prototype.capitalize = function(){
-   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
-};
-
-function render_template(name, context, parent, _callback) {
-  alert("foo!");
-  alert(name);
-  var template = new jugl.Template({
-    url: "/static/templates/" + name,
-    callback: function(template) {
-      var el = template.process({context: context});
-      jQuery(parent).empty();
-      jQuery(el).appendTo(parent);
-      if( _callback ) _callback();
-    }});
-};
-
-function Variable(id) {
-  this.name = id;
-  var text = jQuery("#data #"+id).attr("class");
-  this.text = text || id.replace(/_/g, " ").capitalize();
-  this.color = getColor(id);
-};
-
 function getLayers() {
   return Layer.getAll().filter(function() {
     if( this.id == "primary" ) return false;
