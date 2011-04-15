@@ -373,7 +373,8 @@ function drawLayer(layer_id) {
   var ul = jQuery("#legendbox ul#legend");
   ul.empty();
 
-  Layer.get(layer_id).datasets().each(
+  var layer = Layer.get(layer_id);
+  layer.datasets().each(
     function() {
       var variable = this;
       var li = jQuery("<li />");
