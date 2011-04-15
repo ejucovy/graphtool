@@ -135,9 +135,12 @@ var default_url_builder = function(variable) {
   return "variables/" + variable + ".html";
 };
 
-function startApp(initial_layer, url_builder) {
+function startApp(initial_layer, url_builder, set_bookmark) {
   initial_layer = initial_layer || "layer_1";
   url_builder = url_builder || default_url_builder;
+  set_bookmark = set_bookmark || function() {
+    // do nothing
+  };
   jQuery(window).load(function() {
 
     drawLayersTab(initial_layer);
@@ -370,11 +373,4 @@ function startApp(initial_layer, url_builder) {
 
   set_bookmark();
 });
-};
-
-var set_bookmark = function() {
-  var bookmark = make_bookmark();
-  // TODO
-  bookmark = window.location.protocol+"//"+window.location.host + "/games/{{game.id}}/graph/?" + bookmark;
-  jQuery("#getlink_url").val(bookmark);
 };
