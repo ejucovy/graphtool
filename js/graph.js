@@ -378,10 +378,10 @@ function drawLayer(layer_id) {
     function() {
       var variable = this;
       var li = jQuery("<li />");
-      li.css("color", variable.color);
+      li.css("color", variable.color());
       var a = jQuery("<a />")
-	.attr("href", "#"+variable.id)
-	.text(variable.text);
+	  .attr("href", "#"+variable.id)
+	  .text(variable.text());
       a.appendTo(li);
       li.appendTo(ul);
     });
