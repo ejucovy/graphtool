@@ -63,8 +63,14 @@ for( var i=0; i<150; ++i ) {
   Raphael.fn.g.colors.push(color);
 }
 
-var DrawWhenReady = function(count, before, after) {
+var DrawWhenReady = function(count, before, after, table_builder) {
     var self = this;
+
+    // The default table_builder assumes that the variable data
+    // is already in the proper HTML table format when it's fetched.
+    table_builder = table_builder || function(data, var_id) {
+	return jQuery(data).filter("table");
+    };
 
     this.load = function(var_id, url) {
         if( !var_id ) {
@@ -79,7 +85,7 @@ var DrawWhenReady = function(count, before, after) {
         self._vars.push(var_id);
 
 	var callback = function(data) {
-	    var newEl = jQuery(data).filter("table");
+	    var newEl = table_builder(data, var_id);
 	    newEl.appendTo("#data");
 	    var id = newEl.attr("id");
 	    self.tick();

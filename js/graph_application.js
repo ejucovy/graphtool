@@ -111,7 +111,7 @@ var default_url_builder = function(variable) {
   return "variables/" + variable + ".html";
 };
 
-function startApp(initial_layer, url_builder, set_bookmark) {
+function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
   initial_layer = initial_layer || "layer_1";
   url_builder = url_builder || default_url_builder;
   set_bookmark = set_bookmark || function() {
@@ -130,7 +130,7 @@ function startApp(initial_layer, url_builder, set_bookmark) {
       shadow();
       drawPrimaryGraph();
       drawVariablesOnPrimaryGraph();
-    });
+    }, table_builder);
     var url = url_builder("morx");
     loader.load("morx", url);
 
@@ -140,7 +140,7 @@ function startApp(initial_layer, url_builder, set_bookmark) {
       var switchXAxis = function() {
         drawPrimaryGraph();
       };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis);
+      var loader = new DrawWhenReady(0, function() { }, switchXAxis, table_builder);
       var url = url_builder(var_id);
       loader.load(var_id, url);
     });
@@ -151,7 +151,7 @@ function startApp(initial_layer, url_builder, set_bookmark) {
       var switchXAxis = function() {
         drawLayer(layer_id);
       };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis);
+      var loader = new DrawWhenReady(0, function() { }, switchXAxis, table_builder);
       var url = url_builder(var_id);
       loader.load(var_id, url);
     });
@@ -169,7 +169,7 @@ function startApp(initial_layer, url_builder, set_bookmark) {
           drawPrimaryGraph(true);
           drawVariablesOnPrimaryGraph();
           set_bookmark();
-      });
+      }, table_builder);
       var url = url_builder(x_axis);
       loader.load(x_axis, url);
 
@@ -329,7 +329,7 @@ function startApp(initial_layer, url_builder, set_bookmark) {
         set_bookmark();
       };
 
-      var loader = new DrawWhenReady(0, function() { }, addToLayer);
+      var loader = new DrawWhenReady(0, function() { }, addToLayer, table_builder);
       var url = url_builder(var_id);
       loader.load(var_id, url);
     };

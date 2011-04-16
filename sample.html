@@ -39,7 +39,23 @@ div.bluff-tooltip {
 
 <script type="text/javascript" src="js/graph_application.js"></script>
 <script type="text/javascript">
-startApp();
+var url_builder = function(variable) {
+  if( variable == "fleem" ) { return "variables/fleem.json" };
+  return "variables/" + variable + ".html";
+};
+var table_builder = function(data, variable) {
+  if( variable == "fleem" ) { 
+    var table = jQuery("<table />").attr("id", "fleem");
+    jQuery("<tr><th scope='col'>turn #</th><th scope='col'>Amount Fleem</th></tr>").appendTo(table);
+    var list = eval(data);
+    for( var i = 0; i < list.length; ++i ) {
+      jQuery("<tr><th scope='row'>"+i+"</th><td>"+list[i]+"</td></tr>").appendTo(table);
+    }
+    return table;
+  }
+  return jQuery(data).filter("table");
+};
+startApp("layer_1", url_builder, function() {}, table_builder);
 </script>
 </head>
 
@@ -133,6 +149,9 @@ startApp();
 	    <option value="productivity">
 	      Productivity
 	    </option>
+	    <option value="fleem">
+	      Amount Fleem
+	    </option>
 	  </select>
 	</form>
       </div><!-- class="x_axis" -->
@@ -183,6 +202,11 @@ startApp();
 	      <li>
 		<a href="#productivity">
 		  Productivity
+		</a>
+	      </li>
+	      <li>
+		<a href="#fleem">
+		  Amount Fleem
 		</a>
 	      </li>
 	    </ul><!-- eventstab -->
@@ -252,6 +276,9 @@ startApp();
 	      </option>
 	      <option value="productivity">
 		Productivity
+	      </option>
+	      <option value="fleem">
+		Amount Fleem
 	      </option>
 	    </select>
 	  </form>
