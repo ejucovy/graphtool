@@ -107,11 +107,9 @@ function highlightLayerInTab(layer_id) {
   jQuery("#gl_tabber_layers .layerstab a[href='#"+layer_id+"']").addClass("active");
 };
 
-var default_url_builder = function(variable) {
-  return "variables/" + variable + ".html";
-};
+function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
+  var VariableLoader = VariableLoaderFactory(url_builder, table_builder);
 
-function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
   initial_layer = initial_layer || "layer_1";
   url_builder = url_builder || default_url_builder;
   set_bookmark = set_bookmark || function() {
@@ -125,14 +123,13 @@ function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
     markVariablesInUse();
 
     // lame way of making sure the primary graph can be drawn
-    var loader = new DrawWhenReady(0, function() { }, function() {
+    var loader = new VariableLoader(0, function() { }, function() {
       Layer.get("primary").add_dataset("morx");
       shadow();
       drawPrimaryGraph();
       drawVariablesOnPrimaryGraph();
-    }, table_builder);
-    var url = url_builder("morx");
-    loader.load("morx", url);
+    });
+    loader.load("morx");
 
     jQuery(".mg .x_axis select").live("change", function() {
       var var_id = jQuery(this).val();
@@ -140,9 +137,8 @@ function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
       var switchXAxis = function() {
         drawPrimaryGraph();
       };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis, table_builder);
-      var url = url_builder(var_id);
-      loader.load(var_id, url);
+      var loader = new VariableLoader(0, function() { }, switchXAxis);
+      loader.load(var_id);
     });
 
     jQuery("#layer_graph_container .x_axis select").live("change", function() {
@@ -151,9 +147,8 @@ function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
       var switchXAxis = function() {
         drawLayer(layer_id);
       };
-      var loader = new DrawWhenReady(0, function() { }, switchXAxis, table_builder);
-      var url = url_builder(var_id);
-      loader.load(var_id, url);
+      var loader = new VariableLoader(0, function() { }, switchXAxis);
+      loader.load(var_id);
     });
 
     jQuery("div.layer_actions input[value='Push']").click(function() {
@@ -162,16 +157,15 @@ function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
       // since the buffer is what will be pushed to the primary graph,
       // we want to use the primary graph's x-axis state
       var x_axis = jQuery(".mg .x_axis select").val();
-      var loader = new DrawWhenReady(0, function() { },
+      var loader = new VariableLoader(0, function() { },
         function() {
           Visual.superimpose(layer_id, "primary");
           shadow_one(Layer.get(layer_id));
           drawPrimaryGraph(true);
           drawVariablesOnPrimaryGraph();
           set_bookmark();
-      }, table_builder);
-      var url = url_builder(x_axis);
-      loader.load(x_axis, url);
+      });
+      loader.load(x_axis);
 
       drawLayersOnPrimaryGraph();
     });
@@ -329,9 +323,8 @@ function startApp(initial_layer, url_builder, set_bookmark, table_builder) {
         set_bookmark();
       };
 
-      var loader = new DrawWhenReady(0, function() { }, addToLayer, table_builder);
-      var url = url_builder(var_id);
-      loader.load(var_id, url);
+      var loader = new VariableLoader(0, function() { }, addToLayer);
+      loader.load(var_id);
     };
 
     /* double-clicking a variable in the layer_variables legend will remove it */

@@ -63,62 +63,77 @@ for( var i=0; i<150; ++i ) {
   Raphael.fn.g.colors.push(color);
 }
 
-var DrawWhenReady = function(count, before, after, table_builder) {
-    var self = this;
+var VariableLoaderFactory = function(url_builder, table_builder) {
 
+    // The default url_builder assumes that the variable data is all in a
+    // static HTML files named for the variable IDs, in a variables/ subdir.
+    url_builder = url_builder || function(variable) {
+	return "variables/" + variable + ".html";
+    };
     // The default table_builder assumes that the variable data
     // is already in the proper HTML table format when it's fetched.
     table_builder = table_builder || function(data, var_id) {
 	return jQuery(data).filter("table");
     };
 
-    this.load = function(var_id, url) {
-        if( !var_id ) {
-	  before(var_id, self);
-	  after(var_id, self);
-	  return;
-        };
+    var VariableLoader = function(count, before, after) {
+	var self = this;
 
-        if( jQuery.inArray(var_id, self._vars) != -1 ) {
-	    return;
-	};
-        self._vars.push(var_id);
+	self.url_builder = url_builder;
+	self.table_builder = table_builder;
+	self.before = before;
+	self.after = after;
 
-	var callback = function(data) {
-	    var newEl = table_builder(data, var_id);
-	    newEl.appendTo("#data");
-	    var id = newEl.attr("id");
-	    self.tick();
-	    after(var_id, self);
-	};
-        before(var_id, self);
-	if( Dataset.exists(var_id) ) {
-	  after(var_id, self);
-	  return;
-	}
-        jQuery.get(url, callback);
-	return true;
-    };
-    this.count = count;
-    this._vars = [];
-    this.tick = function() {
-	--self.count;
-	if( self.count == 0 ) {
-	    self.draw();
+	this.load = function(var_id) {
+	    if( !var_id ) {
+		self.before(var_id, self);
+		self.after(var_id, self);
+		return;
+	    };
+	    
+	    if( jQuery.inArray(var_id, self._vars) != -1 ) {
+		return;
+	    };
+	    self._vars.push(var_id);
+
+	    var callback = function(data) {
+		var newEl = self.table_builder(data, var_id);
+		newEl.appendTo("#data");
+		var id = newEl.attr("id");
+		self.tick();
+		after(var_id, self);
+	    };
+	    self.before(var_id, self);
+	    if( Dataset.exists(var_id) ) {
+		self.after(var_id, self);
+		return;
+	    }
+	    var url = self.url_builder(var_id);
+	    jQuery.get(url, callback);
 	    return true;
-	}
+	};
+	this.count = count;
+	this._vars = [];
+	this.tick = function() {
+	    --self.count;
+	    if( self.count == 0 ) {
+		self.draw();
+		return true;
+	    }
+	};
+	this._addLater = [];
+	this.addLater = function(var_id, graph_id) {
+	    self._addLater.push([var_id, graph_id]);
+	};
+	this.draw = function() {
+	    for( var i=0; i<self._addLater.length; ++i ) {
+		var var_id = self._addLater[i][0],
+		graph_id = self._addLater[i][1];
+		Visual.add(var_id, graph_id);
+	    }
+	};
     };
-    this._addLater = [];
-    this.addLater = function(var_id, graph_id) {
-	self._addLater.push([var_id, graph_id]);
-    };
-    this.draw = function() {
-	for( var i=0; i<self._addLater.length; ++i ) {
-	    var var_id = self._addLater[i][0],
-	    graph_id = self._addLater[i][1];
-	    Visual.add(var_id, graph_id);
-	}
-    };
+    return VariableLoader;
 };
 
 function resetLayers(graph_id, xAxis) {
