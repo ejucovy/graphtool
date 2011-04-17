@@ -108,7 +108,7 @@ function highlightLayerInTab(layer_id) {
 };
 
 function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
-  var VariableLoader = VariableLoaderFactory(url_builder, table_builder);
+  var VariableLoader = VariableLoaderClassFactory(url_builder, table_builder);
 
   initial_layer = initial_layer || "layer_1";
   url_builder = url_builder || default_url_builder;

@@ -63,7 +63,7 @@ for( var i=0; i<150; ++i ) {
   Raphael.fn.g.colors.push(color);
 }
 
-var VariableLoaderFactory = function(url_builder, table_builder) {
+var VariableLoaderClassFactory = function(url_builder, table_builder) {
 
     // The default url_builder assumes that the variable data is all in a
     // static HTML files named for the variable IDs, in a variables/ subdir.
