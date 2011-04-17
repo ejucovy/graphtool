@@ -86,13 +86,13 @@ var VariableLoaderClassFactory = function(url_builder, table_builder) {
 
 	this.load = function(var_id) {
 	    if( !var_id ) {
-		self.before(var_id, self);
-		self.after(var_id, self);
+		self.before && self.before(var_id, self);
+		self.after && self.after(var_id, self);
 		return;
 	    };
-	    
 	    if( jQuery.inArray(var_id, self._vars) != -1 ) {
-		return;
+		self.before && self.before(var_id, self);
+		self.after && self.after(var_id, self);
 	    };
 	    self._vars.push(var_id);
 
@@ -101,11 +101,11 @@ var VariableLoaderClassFactory = function(url_builder, table_builder) {
 		newEl.appendTo("#data");
 		var id = newEl.attr("id");
 		self.tick();
-		after(var_id, self);
+		self.after && self.after(var_id, self);
 	    };
-	    self.before(var_id, self);
+	    self.before && self.before(var_id, self);
 	    if( Dataset.exists(var_id) ) {
-		self.after(var_id, self);
+		self.after && self.after(var_id, self);
 		return;
 	    }
 	    var url = self.url_builder(var_id);

@@ -123,7 +123,7 @@ function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
     markVariablesInUse();
 
     // lame way of making sure the primary graph can be drawn
-    var loader = new VariableLoader(0, function() { }, function() {
+    var loader = new VariableLoader(0, null, function() {
       Layer.get("primary").add_dataset("morx");
       shadow();
       drawPrimaryGraph();
@@ -133,21 +133,16 @@ function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
 
     jQuery(".mg .x_axis select").live("change", function() {
       var var_id = jQuery(this).val();
-      var layer_id = jQuery("h3.layertitle").attr("name");
-      var switchXAxis = function() {
-        drawPrimaryGraph();
-      };
-      var loader = new VariableLoader(0, function() { }, switchXAxis);
+      loader.before = null;
+      loader.after = function() { drawPrimaryGraph(); };
       loader.load(var_id);
     });
 
     jQuery("#layer_graph_container .x_axis select").live("change", function() {
       var var_id = jQuery(this).val();
       var layer_id = jQuery("h3.layertitle").attr("name");
-      var switchXAxis = function() {
-        drawLayer(layer_id);
-      };
-      var loader = new VariableLoader(0, function() { }, switchXAxis);
+      loader.before = null;
+      loader.after = function() { drawLayer(layer_id); };
       loader.load(var_id);
     });
 
@@ -157,14 +152,14 @@ function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
       // since the buffer is what will be pushed to the primary graph,
       // we want to use the primary graph's x-axis state
       var x_axis = jQuery(".mg .x_axis select").val();
-      var loader = new VariableLoader(0, function() { },
-        function() {
+      loader.before = null;
+      loader.after = function() {
           Visual.superimpose(layer_id, "primary");
           shadow_one(Layer.get(layer_id));
           drawPrimaryGraph(true);
           drawVariablesOnPrimaryGraph();
           set_bookmark();
-      });
+      };
       loader.load(x_axis);
 
       drawLayersOnPrimaryGraph();
@@ -322,8 +317,8 @@ function startApp(initial_layer, url_builder, table_builder, set_bookmark) {
 
         set_bookmark();
       };
-
-      var loader = new VariableLoader(0, function() { }, addToLayer);
+      loader.before = null;
+      loader.after = addToLayer;
       loader.load(var_id);
     };
 
